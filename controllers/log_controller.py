@@ -38,8 +38,11 @@ class GwLogController:
             date = datetime.datetime.today().strftime('%Y%m%d')
         else:
             date = datetime.datetime.strptime(date, '%Y-%m-%d').strftime('%Y%m%d')
+
+        log_path = self.handler().config().get('gw_log_path')
+        log_file_prefix = self.handler().config().get('gw_log_file_prefix')
         
-        log_path = os.path.join(self.handler().config().get('gw_log_path'), date, f"qwc2-giswater-services_{date}.log")
+        log_path = os.path.join(log_path, date, f"{log_file_prefix}_{date}.log")
         if not os.path.isfile(log_path):
             self.lines = []
             return

@@ -15,6 +15,12 @@ def load_plugin(app, handler):
             "Giswater Log plugin: "
             "Required config option 'gw_log_path' is not set or invalid"
         )
+    gw_log_file_prefix = config.get('gw_log_file_prefix')
+    if gw_log_file_prefix is None:
+        app.logger.error(
+            "Giswater Log plugin: "
+            "Required config option 'gw_log_file_prefix' is not set"
+        )
 
     # create controller (including routes)
     GwLogController(app, handler)
