@@ -10,6 +10,8 @@ import re
 import datetime
 
 from flask import Flask, render_template, request, redirect, url_for, session
+from utils import i18n
+
 
 app = Flask(__name__)
 
@@ -112,4 +114,4 @@ class GwLogController:
                 log_contents.append(log)
 
         return render_template("%s/log.html" % self.templates_dir, title="GW Services Logs", log_contents=log_contents,
-                            num_pages=num_pages, current_page=current_page, date_selected=self.date_selected)
+                            num_pages=num_pages, current_page=current_page, date_selected=self.date_selected, i18n=i18n)
