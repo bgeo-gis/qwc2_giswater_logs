@@ -169,6 +169,11 @@
             var json = JSON.parse(jsonString);
             jsonEditor = new JSONEditor(container, options);
             jsonEditor.set(json);
+            setTimeout(function() {
+                if (jsonEditor && jsonEditor.expandAll) {
+                    jsonEditor.expandAll();
+                }
+            }, 0);
         } catch (e) {
             jsonEditor = new JSONEditor(container, {
                 mode: 'code',
@@ -191,23 +196,10 @@
         openJsonModal(currentModalResponse);
     }
 
-    function showResponseFromButton(button, event) {
-        if (event) {
-            event.stopPropagation();
-        }
+    function showResponseFromButton(button) {
         openResponseModal(
             button.getAttribute('data-response') || '',
             button.getAttribute('data-execution') || ''
-        );
-    }
-
-    function handleRowClick(event, row) {
-        if (event.target.closest('.btn-copy, .btn-view-response')) {
-            return;
-        }
-        openResponseModal(
-            row.getAttribute('data-response') || '',
-            row.getAttribute('data-execution') || ''
         );
     }
 
@@ -445,23 +437,50 @@
       <span>{{ i18n.translate('loading') }}</span>
     </div>
     {% if total_filtered > 0 %}
-    <table class="table table-striped table-hover logs-table">
+    <table class="table table-striped table-hover logs-table gw-data-table">
       <thead>
         <tr>
-          <th class="col-level"><i class="fas fa-signal"></i> {{ i18n.translate('level') }}</th>
-          <th class="col-timestamp"><i class="fas fa-clock"></i> {{ i18n.translate('timestamp') }}</th>
-          <th class="col-user"><i class="fas fa-user"></i> {{ i18n.translate('user') }}</th>
-          <th class="col-service"><i class="fas fa-cog"></i> {{ i18n.translate('service') }}</th>
-          <th class="col-execution"><i class="fas fa-terminal"></i> {{ i18n.translate('execution') }}</th>
-          <th class="col-response"><i class="fas fa-eye"></i> {{ i18n.translate('response') }}</th>
+          <th class="gw-th col-level">
+            <span class="gw-th-content">
+              <i class="fas fa-signal gw-th-icon" aria-hidden="true"></i>
+              <span>{{ i18n.translate('level') }}</span>
+            </span>
+          </th>
+          <th class="gw-th col-timestamp">
+            <span class="gw-th-content">
+              <i class="fas fa-clock gw-th-icon" aria-hidden="true"></i>
+              <span>{{ i18n.translate('timestamp') }}</span>
+            </span>
+          </th>
+          <th class="gw-th col-user">
+            <span class="gw-th-content">
+              <i class="fas fa-user gw-th-icon" aria-hidden="true"></i>
+              <span>{{ i18n.translate('user') }}</span>
+            </span>
+          </th>
+          <th class="gw-th col-service">
+            <span class="gw-th-content">
+              <i class="fas fa-cog gw-th-icon" aria-hidden="true"></i>
+              <span>{{ i18n.translate('service') }}</span>
+            </span>
+          </th>
+          <th class="gw-th col-execution">
+            <span class="gw-th-content">
+              <i class="fas fa-terminal gw-th-icon" aria-hidden="true"></i>
+              <span>{{ i18n.translate('execution') }}</span>
+            </span>
+          </th>
+          <th class="gw-th col-response text-right">
+            <span class="gw-th-content">
+              <i class="fas fa-eye gw-th-icon" aria-hidden="true"></i>
+              <span>{{ i18n.translate('response') }}</span>
+            </span>
+          </th>
         </tr>
       </thead>
       <tbody>
         {% for log in log_contents %}
-        <tr class="log-row log-row-{{ log.level|lower }} log-row-clickable"
-          data-response="{{ log.response_msg_full|e }}"
-          data-execution="{{ log.execution_msg_full|e }}"
-          onclick="handleRowClick(event, this)">
+        <tr class="log-row log-row-{{ log.level|lower }}">
           <td class="col-level">
             <span class="level-badge level-{{ log.level }}">{{ log.level }}</span>
           </td>
@@ -481,12 +500,12 @@
               <code class="execution-code">{{ log.execution_msg }}{% if log.execution_msg|length >= 80 %}...{% endif %}</code>
             </button>
           </td>
-          <td class="col-response text-center">
+          <td class="col-response text-right">
             <button type="button"
               class="btn-view-response"
               data-response="{{ log.response_msg_full|e }}"
               data-execution="{{ log.execution_msg_full|e }}"
-              onclick="showResponseFromButton(this, event)"
+              onclick="showResponseFromButton(this)"
               title="{{ i18n.translate('view_response') }}">
               <span class="btn-response-icon" aria-hidden="true">&#128065;</span>
               <span class="btn-response-text">{{ i18n.translate('view') }}</span>
